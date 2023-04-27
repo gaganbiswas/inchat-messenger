@@ -12,3 +12,13 @@ interface SearchedUser {
   name: string;
   image: string;
 }
+
+interface CreateConversationData {
+  createConversation: {
+    conversationId: string;
+  };
+}
+
+interface CreateConversationInput {
+  participantIds: Array<string>;
+}
