@@ -7,7 +7,6 @@ interface IButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const Button = ({ loading, label, ...props }: IButtonProps) => {
-  console.log(loading);
   return (
     <button
       disabled={loading}

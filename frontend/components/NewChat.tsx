@@ -1,4 +1,6 @@
 import { Transition, Dialog } from "@headlessui/react";
+import { useRecoilState } from "recoil";
+import { conversationState } from "@/recoil/atom";
 import React, {
   Dispatch,
   FormEventHandler,
@@ -24,6 +26,7 @@ const NewChat = ({
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
 }) => {
+  const [_, setConversationId] = useRecoilState(conversationState);
   const formRef = useRef<HTMLFormElement>(null);
   const [participants, setParticipants] = useState<Array<SearchedUser>>([]);
   const [searchUsers, { data, error, loading }] = useLazyQuery<
@@ -48,11 +51,23 @@ const NewChat = ({
       ...participants.map((p) => p.id),
     ];
     try {
-      const {} = await createConversation({
+      const { data } = await createConversation({
         variables: {
           participantIds,
         },
       });
+
+      if (!data?.createConversation) {
+        throw new Error("Failed to create conversation");
+      }
+
+      const {
+        createConversation: { conversationId },
+      } = data;
+
+      setConversationId(conversationId || "");
+      setParticipants([]);
+      handleClose();
     } catch (error: any) {
       console.log(error);
       alert(error?.message);

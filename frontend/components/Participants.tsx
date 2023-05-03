@@ -10,8 +10,6 @@ const Participants = ({
   participants,
   removeParticipant,
 }: ParticipantsProps) => {
-  console.log(participants);
-
   return (
     <>
       <span className="font-semibold text-gray-800">Participants</span>
