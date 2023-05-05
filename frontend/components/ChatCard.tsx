@@ -17,6 +17,7 @@ type ChatCardProps = {
   userId?: string | null;
   isSelected: boolean;
   onClick: () => void;
+  hasSeenLatestMessage: boolean;
 };
 
 const ChatCard = ({
@@ -24,6 +25,7 @@ const ChatCard = ({
   conversation,
   isSelected,
   onClick,
+  hasSeenLatestMessage,
 }: ChatCardProps) => {
   return (
     <>
