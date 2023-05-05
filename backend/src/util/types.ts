@@ -45,7 +45,7 @@ export interface ConversationCreatedSubscriptionPayload {
   conversationCreated: ConversationPopulated;
 }
 
-export interface ConversationUpdatedSubscriptionData {
+export interface ConversationUpdatedSubscriptionPayload {
   conversationUpdated: {
     conversation: ConversationPopulated;
     addedUserIds: Array<string>;

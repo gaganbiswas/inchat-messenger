@@ -29,6 +29,12 @@ interface ConversationsData {
   conversations: Array<ConversationPopulated>;
 }
 
+interface ConversationUpdatedData {
+  conversationUpdated: {
+    conversation: ConversationPopulated;
+  };
+}
+
 interface User {
   id?: string | null | undefined;
   name?: string | null | undefined;

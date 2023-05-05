@@ -1,8 +1,12 @@
-import { ConversationCreatedSubscriptionPayload } from "./../../util/types";
+import {
+  ConversationCreatedSubscriptionPayload,
+  ConversationUpdatedSubscriptionPayload,
+} from "./../../util/types";
 import { Prisma } from "@prisma/client";
 import { ConversationPopulated, GraphQLContext } from "../../util/types";
 import { GraphQLError } from "graphql";
 import { withFilter } from "graphql-subscriptions";
+import { userIsConversationParticipant } from "../../util/function";
 
 const resolvers = {
   Query: {
@@ -23,15 +27,6 @@ const resolvers = {
 
       try {
         const conversations = await prisma.conversation.findMany({
-          // where: {
-          //   participants: {
-          //     some: {
-          //       userId: {
-          //         equals: userId,
-          //       },
-          //     },
-          //   },
-          // },
           include: conversationPopulated,
         });
 
@@ -143,15 +138,50 @@ const resolvers = {
           context: GraphQLContext
         ) => {
           const { session } = context;
+
+          if (!session?.user) {
+            throw new GraphQLError("Not authorized");
+          }
+
           const {
             conversationCreated: { participants },
           } = payload;
 
-          const userIsParticipant = !!participants.find(
-            (p) => p.userId === session?.user?.id
+          const userIsParticipant = userIsConversationParticipant(
+            participants,
+            session.user.id
           );
 
           return userIsParticipant;
+        }
+      ),
+    },
+    conversationUpdated: {
+      subscribe: withFilter(
+        (_: any, __: any, context: GraphQLContext) => {
+          const { pubsub } = context;
+
+          return pubsub.asyncIterator(["CONVERSATION_UPDATED"]);
+        },
+        (
+          payload: ConversationUpdatedSubscriptionPayload,
+          _: any,
+          context: GraphQLContext
+        ) => {
+          const { session } = context;
+
+          if (!session?.user) {
+            throw new GraphQLError("Not authorized");
+          }
+
+          const { id: userId } = session.user;
+          const {
+            conversationUpdated: {
+              conversation: { participants },
+            },
+          } = payload;
+
+          return userIsConversationParticipant(participants, userId);
         }
       ),
     },

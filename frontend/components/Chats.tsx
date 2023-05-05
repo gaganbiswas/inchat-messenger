@@ -1,9 +1,9 @@
 import React, { useEffect } from "react";
 import ChatCard from "./ChatCard";
-import { gql, useMutation, useQuery } from "@apollo/client";
+import { gql, useMutation, useQuery, useSubscription } from "@apollo/client";
 import ConversationOperations from "../graphql/operations/conversation";
 import { client } from "@/graphql/apollo-client";
-import { ConversationsData } from "@/typings";
+import { ConversationUpdatedData, ConversationsData } from "@/typings";
 import {
   ConversationPopulated,
   ParticipantPopulated,
@@ -30,7 +30,30 @@ const Chats = ({ user }: { user?: User }) => {
   const [markConversationAsRead] = useMutation<
     { markConversationAsRead: boolean },
     { userId: string; conversationId: string }
-  >(ConversationOperations.Mutations.markConversationAsRead);
+  >(ConversationOperations.Mutations.markConversationAsRead, {
+    client: client,
+  });
+
+  useSubscription<ConversationUpdatedData>(
+    ConversationOperations.Subscriptions.conversationUpdated,
+    {
+      client: client,
+      onData: ({ client, data }) => {
+        const { data: subscriptionData } = data;
+
+        if (!subscriptionData) return;
+
+        const {
+          conversationUpdated: { conversation: updatedConversation },
+        } = subscriptionData;
+
+        if (updatedConversation.id === conversationId) {
+          onViewConversation(conversationId, false);
+          return;
+        }
+      },
+    }
+  );
 
   const onViewConversation = async (
     conversationId: string,
@@ -131,6 +154,10 @@ const Chats = ({ user }: { user?: User }) => {
     return unsub;
   }, []);
 
+  const sortedConversations = [...conversationsData?.conversations!].sort(
+    (a, b) => b.updatedAt.valueOf() - a.updatedAt.valueOf()
+  );
+
   return (
     <div
       className="w-full flex flex-col overflow-y-auto h-full"
@@ -139,7 +166,7 @@ const Chats = ({ user }: { user?: User }) => {
       {!conversationsData ? (
         <div>Loading...</div>
       ) : (
-        conversationsData?.conversations.map((conversation) => {
+        sortedConversations.map((conversation) => {
           const participant = conversation.participants.find(
             (p) => p.user.id === user?.id
           );
