@@ -13,7 +13,7 @@ const ClientPanel = ({ session }: { session: Session }) => {
       <div className="h-full flex-grow">
         <div className="flex h-full w-full bg-orange-50 bg-chat-bg">
           <div className="flex flex-1 h-full flex-col">
-            <FeedPanel />
+            <FeedPanel user={session.user} />
           </div>
         </div>
       </div>

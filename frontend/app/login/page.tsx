@@ -22,12 +22,14 @@ const Login = async () => {
           className="w-10 h-10 rounded-full"
           priority
         />
-        <span className="text-white font-semibold uppercase">MemeChat Web</span>
+        <span className="text-white font-semibold uppercase">
+          InChat Messenger
+        </span>
       </header>
       <main className="w-full bg-white flex flex-col">
         <div className="px-6 py-12 flex flex-col items-center">
           <h1 className="text-2xl text-gray-700 text-center">
-            Start using MemeChat Web
+            Start using InChat Web
           </h1>
           <GoogleButton />
         </div>

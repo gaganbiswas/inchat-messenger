@@ -1,5 +1,6 @@
 import React from "react";
 import { CloseIcon } from "./Icons";
+import { SearchedUser } from "@/typings";
 
 type ParticipantsProps = {
   participants: Array<SearchedUser>;

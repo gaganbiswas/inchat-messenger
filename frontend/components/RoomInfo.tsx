@@ -1,10 +1,17 @@
 import React from "react";
 
-const RoomInfo = () => {
+type RoomInfoProps = {
+  roomName: String;
+  lastSeen?: Date;
+};
+
+const RoomInfo = ({ roomName, lastSeen }: RoomInfoProps) => {
   return (
     <div className="flex flex-col">
-      <p className="text-base text-gray-900">Gagan Biswas</p>
-      <span className="text-xs text-gray-600">last seen: 12:03pm</span>
+      <span className="text-base text-gray-900 leading-none">{roomName}</span>
+      <span className="mt-0.5 text-xs text-gray-600">
+        <i>Tap for more info</i>
+      </span>
     </div>
   );
 };

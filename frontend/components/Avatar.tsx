@@ -11,8 +11,8 @@ const Avatar = ({
   size = "w-12 h-12",
   src = "",
 }: {
-  size: string;
-  src: string | null | undefined;
+  size?: string;
+  src?: string | null | undefined;
 }) => {
   return (
     <Image

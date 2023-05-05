@@ -1,5 +1,6 @@
-import React, { Dispatch, SetStateAction } from "react";
+import React from "react";
 import Avatar from "./Avatar";
+import { SearchedUser } from "@/typings";
 
 const UserSearchList = ({
   users,

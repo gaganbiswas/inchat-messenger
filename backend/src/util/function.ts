@@ -1,4 +1,5 @@
 import fetch from "node-fetch";
+import { ParticipantPopulated } from "./types";
 
 export const getServerSession = async (cookie: string) => {
   const res = await fetch(`${process.env.NEXTAUTH_URL}/api/auth/session`, {
@@ -8,3 +9,10 @@ export const getServerSession = async (cookie: string) => {
 
   return session;
 };
+
+export function userIsConversationParticipant(
+  participants: Array<ParticipantPopulated>,
+  userId: string
+): boolean {
+  return !!participants.find((participant) => participant.userId === userId);
+}

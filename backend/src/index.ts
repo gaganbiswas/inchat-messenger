@@ -4,10 +4,13 @@ import { ApolloServer } from "@apollo/server";
 import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
 import { expressMiddleware } from "@apollo/server/express4";
 import express from "express";
+import { PubSub } from "graphql-subscriptions";
+import { WebSocketServer } from "ws";
+import { useServer } from "graphql-ws/lib/use/ws";
 import { createServer } from "http";
 import resolvers from "./graphql/resolvers";
 import typeDefs from "./graphql/typeDefs";
-import { GraphQLContext, Session } from "./util/types";
+import { GraphQLContext, Session, SubscriptionContext } from "./util/types";
 import * as dotenv from "dotenv";
 import cors from "cors";
 import pkg from "body-parser";
@@ -26,12 +29,51 @@ const main = async () => {
   const app = express();
   const httpServer = createServer(app);
 
+  const wsServer = new WebSocketServer({
+    server: httpServer,
+    path: "/graphql/subscriptions",
+  });
+
   const prisma = new PrismaClient();
+  const pubsub = new PubSub();
+
+  const getSubscriptionContext = async (
+    ctx: SubscriptionContext
+  ): Promise<GraphQLContext> => {
+    ctx;
+    if (ctx.connectionParams && ctx.connectionParams.session) {
+      const { session } = ctx.connectionParams;
+      return { session, prisma, pubsub };
+    }
+    return { session: null, prisma, pubsub };
+  };
+
+  const serverCleanup = useServer(
+    {
+      schema,
+      context: (ctx: SubscriptionContext) => {
+        return getSubscriptionContext(ctx);
+      },
+    },
+    wsServer
+  );
 
   const server = new ApolloServer({
     schema,
     csrfPrevention: true,
-    plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
+    plugins: [
+      ApolloServerPluginDrainHttpServer({ httpServer }),
+
+      {
+        async serverWillStart() {
+          return {
+            async drainServer() {
+              await serverCleanup.dispose();
+            },
+          };
+        },
+      },
+    ],
     cache: "bounded",
   });
   await server.start();
@@ -48,7 +90,7 @@ const main = async () => {
     expressMiddleware(server, {
       context: async ({ req }): Promise<GraphQLContext> => {
         const session = await getServerSession(req.headers.cookie);
-        return { session: session as Session, prisma };
+        return { session: session as Session, prisma, pubsub };
       },
     })
   );

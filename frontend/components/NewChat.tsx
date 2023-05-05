@@ -18,6 +18,13 @@ import UserSearchList from "./UserSearchList";
 import Participants from "./Participants";
 import Button from "./Button";
 import { getSession } from "next-auth/react";
+import {
+  CreateConversationData,
+  CreateConversationInput,
+  SearchUserInput,
+  SearchUsersData,
+  SearchedUser,
+} from "@/typings";
 
 const NewChat = ({
   isOpen,

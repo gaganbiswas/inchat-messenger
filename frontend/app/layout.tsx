@@ -1,7 +1,7 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "InChat Web",
+  title: "InChat Messenger Web",
   description: "",
   icons: {
     icon: "/favicon.ico",
