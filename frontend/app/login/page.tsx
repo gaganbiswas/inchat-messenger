@@ -12,8 +12,8 @@ const Login = async () => {
   if (session) redirect("/");
 
   return (
-    <div className="w-full max-w-5xl p-6 pt-0 self-start flex flex-col gap-10">
-      <header className="flex items-center gap-3">
+    <div className="w-full max-w-5xl p-6 pt-0 self-start flex flex-col gap-6">
+      <header className="mt-4 lg:mt-0 flex items-center gap-3">
         <Image
           src={Logo}
           alt="Logo"
@@ -29,7 +29,7 @@ const Login = async () => {
       <main className="w-full bg-white flex flex-col">
         <div className="px-6 py-12 flex flex-col items-center">
           <h1 className="text-2xl text-gray-700 text-center">
-            Start using InChat Web
+            Start using InChat Messenger
           </h1>
           <GoogleButton />
         </div>
