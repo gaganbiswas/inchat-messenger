@@ -52,14 +52,14 @@ const Messages = ({ userId, conversationId }: MessageProps) => {
   }, [conversationId]);
 
   return (
-    <div className="flex-1 h-full">
+    <div className="flex-1 h-full overflow-hidden">
       {loading ? (
         <div>Loading...</div>
       ) : data?.messages ? (
         <div className="flex flex-col-reverse overflow-y-auto h-full">
           {data.messages.map((message, i, arr) => (
             <>
-              {i === 0 ? <div className="h-4" /> : null}
+              {i === 0 ? <div className="mt-4" /> : null}
               <MessageBox
                 key={message.id}
                 message={message}

@@ -74,7 +74,7 @@ const Chats = ({ user }: { user?: User }) => {
         },
         update: (cache) => {
           const participantsFragment = cache.readFragment<{
-            pariticipants: Array<ParticipantPopulated>;
+            participants: Array<ParticipantPopulated>;
           }>({
             id: `Conversation:${conversationId}`,
             fragment: gql`
@@ -82,7 +82,7 @@ const Chats = ({ user }: { user?: User }) => {
                 participants {
                   user {
                     id
-                    email
+                    username
                   }
                   hasSeenLatestMessage
                 }
@@ -91,8 +91,7 @@ const Chats = ({ user }: { user?: User }) => {
           });
 
           if (!participantsFragment) return;
-
-          const participants = [...participantsFragment.pariticipants];
+          const participants = [...participantsFragment.participants];
 
           const userParticipantIdx = participants.findIndex(
             (p) => p.user.id === userId
@@ -101,18 +100,16 @@ const Chats = ({ user }: { user?: User }) => {
           if (userParticipantIdx === -1) return;
 
           const userParticipant = participants[userParticipantIdx];
+
           participants[userParticipantIdx] = {
             ...userParticipant,
             hasSeenLatestMessage: true,
           };
 
-          /**
-           * Update Cache
-           */
           cache.writeFragment({
             id: `Conversation:${conversationId}`,
             fragment: gql`
-              fragment UpdatedParticipant on Conversation {
+              fragment UpdatedParticipants on Conversation {
                 participants
               }
             `,
@@ -123,6 +120,7 @@ const Chats = ({ user }: { user?: User }) => {
         },
       });
     } catch (error: any) {
+      console.log(error);
       throw new Error("onViewConversation error", error);
     }
   };
@@ -154,19 +152,21 @@ const Chats = ({ user }: { user?: User }) => {
     return unsub;
   }, []);
 
-  const sortedConversations = [...conversationsData?.conversations!].sort(
-    (a, b) => b.updatedAt.valueOf() - a.updatedAt.valueOf()
-  );
+  const sortedConversations = conversationsData?.conversations
+    ? [...conversationsData?.conversations].sort(
+        (a, b) => b.updatedAt.valueOf() - a.updatedAt.valueOf()
+      )
+    : conversationsData?.conversations;
 
   return (
     <div
-      className="w-full flex flex-col overflow-y-auto h-full"
+      className="w-full flex flex-col overflow-y-auto"
       style={{ scrollbarWidth: "thin" }}
     >
       {!conversationsData ? (
         <div>Loading...</div>
       ) : (
-        sortedConversations.map((conversation) => {
+        sortedConversations?.map((conversation) => {
           const participant = conversation.participants.find(
             (p) => p.user.id === user?.id
           );
