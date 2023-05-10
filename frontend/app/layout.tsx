@@ -1,4 +1,11 @@
 import "./globals.css";
+import { Roboto } from "next/font/google";
+
+const roboto = Roboto({
+  weight: ["400", "500", "700"],
+  subsets: ["latin"],
+  display: "swap",
+});
 
 export const metadata = {
   title: "InChat Messenger Web",
@@ -14,8 +21,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="font-sans">
-      <body className="w-full flex justify-center items-center xl:p-5 bg-gradient-to-b from-sky-500 from-15% to-15% to-gray-200 h-screen">
+    <html lang="en" className={roboto.className}>
+      <body className="w-full flex justify-center items-center xl:p-5 bg-gradient-to-b from-emerald-500 from-25% to-25% to-gray-200 h-screen">
         {children}
       </body>
     </html>

@@ -11,6 +11,7 @@ import {
 import { useRecoilState } from "recoil";
 import { conversationState } from "@/recoil/atom";
 import { User } from "@/typings";
+import { ChatSkeleton } from "./Skeletons";
 
 const Chats = ({ user }: { user?: User }) => {
   const [conversationId, setConversationId] = useRecoilState(conversationState);
@@ -47,9 +48,11 @@ const Chats = ({ user }: { user?: User }) => {
           conversationUpdated: { conversation: updatedConversation },
         } = subscriptionData;
 
-        if (updatedConversation.id === conversationId) {
+        const currentlyViewingConversation =
+          updatedConversation.id === conversationId;
+
+        if (currentlyViewingConversation) {
           onViewConversation(conversationId, false);
-          return;
         }
       },
     }
@@ -57,7 +60,7 @@ const Chats = ({ user }: { user?: User }) => {
 
   const onViewConversation = async (
     conversationId: string,
-    hasSeenLatestMessage: boolean
+    hasSeenLatestMessage: boolean | undefined
   ) => {
     setConversationId(conversationId);
 
@@ -72,6 +75,7 @@ const Chats = ({ user }: { user?: User }) => {
         optimisticResponse: {
           markConversationAsRead: true,
         },
+
         update: (cache) => {
           const participantsFragment = cache.readFragment<{
             participants: Array<ParticipantPopulated>;
@@ -82,7 +86,7 @@ const Chats = ({ user }: { user?: User }) => {
                 participants {
                   user {
                     id
-                    username
+                    email
                   }
                   hasSeenLatestMessage
                 }
@@ -91,6 +95,7 @@ const Chats = ({ user }: { user?: User }) => {
           });
 
           if (!participantsFragment) return;
+
           const participants = [...participantsFragment.participants];
 
           const userParticipantIdx = participants.findIndex(
@@ -100,7 +105,6 @@ const Chats = ({ user }: { user?: User }) => {
           if (userParticipantIdx === -1) return;
 
           const userParticipant = participants[userParticipantIdx];
-
           participants[userParticipantIdx] = {
             ...userParticipant,
             hasSeenLatestMessage: true,
@@ -109,7 +113,7 @@ const Chats = ({ user }: { user?: User }) => {
           cache.writeFragment({
             id: `Conversation:${conversationId}`,
             fragment: gql`
-              fragment UpdatedParticipants on Conversation {
+              fragment UpdatedParticipant on Conversation {
                 participants
               }
             `,
@@ -119,9 +123,8 @@ const Chats = ({ user }: { user?: User }) => {
           });
         },
       });
-    } catch (error: any) {
-      console.log(error);
-      throw new Error("onViewConversation error", error);
+    } catch (error) {
+      console.log("onViewConversation error", error);
     }
   };
 
@@ -163,31 +166,31 @@ const Chats = ({ user }: { user?: User }) => {
       className="w-full flex flex-col overflow-y-auto"
       style={{ scrollbarWidth: "thin" }}
     >
-      {!conversationsData ? (
-        <div>Loading...</div>
-      ) : (
-        sortedConversations?.map((conversation) => {
-          const participant = conversation.participants.find(
-            (p) => p.user.id === user?.id
-          );
+      {loading
+        ? Array(4)
+            .fill(null)
+            .map((e, i) => <ChatSkeleton key={i} />)
+        : sortedConversations?.map((conversation) => {
+            const participant = conversation.participants.find(
+              (p) => p.user.id === user?.id
+            );
 
-          return (
-            <ChatCard
-              userId={user?.id}
-              key={conversation.id}
-              conversation={conversation}
-              onClick={() =>
-                onViewConversation(
-                  conversation.id,
-                  participant?.hasSeenLatestMessage!
-                )
-              }
-              hasSeenLatestMessage={participant?.hasSeenLatestMessage!}
-              isSelected={conversation.id === conversationId}
-            />
-          );
-        })
-      )}
+            return (
+              <ChatCard
+                userId={user?.id}
+                key={conversation.id}
+                conversation={conversation}
+                onClick={() =>
+                  onViewConversation(
+                    conversation.id,
+                    participant?.hasSeenLatestMessage
+                  )
+                }
+                hasSeenLatestMessage={participant?.hasSeenLatestMessage}
+                isSelected={conversation.id === conversationId}
+              />
+            );
+          })}
     </div>
   );
 };

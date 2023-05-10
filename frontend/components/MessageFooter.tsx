@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { MutableRefObject, useRef, useState } from "react";
 import { SendIcon, SmileIcon } from "./Icons";
 import TextareaAutosize from "react-textarea-autosize";
 import { MessagesData, User } from "@/typings";
@@ -7,13 +7,19 @@ import MessageOperations from "@/graphql/operations/message";
 import { SendMessageArguments } from "@/../backend/src/util/types";
 import { client } from "@/graphql/apollo-client";
 import { ObjectID } from "bson";
+import { scrollToBottom } from "@/utils/functions";
 
 type MessageFooterProps = {
   user?: User;
   conversationId: string;
+  endOfMessageRef: MutableRefObject<HTMLDivElement | null>;
 };
 
-const MessageFooter = ({ user, conversationId }: MessageFooterProps) => {
+const MessageFooter = ({
+  user,
+  conversationId,
+  endOfMessageRef,
+}: MessageFooterProps) => {
   const formRef = useRef<HTMLFormElement>(null);
   const [message, setMessage] = useState<string>();
   const [sendMessage] = useMutation<
@@ -49,6 +55,7 @@ const MessageFooter = ({ user, conversationId }: MessageFooterProps) => {
         },
         update: (cache) => {
           setMessage("");
+          scrollToBottom(endOfMessageRef);
           const existing = cache.readQuery<MessagesData>({
             query: MessageOperations.Query.messages,
             variables: { conversationId },

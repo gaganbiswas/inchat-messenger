@@ -1,6 +1,7 @@
 import React from "react";
 import { MessagePopulated } from "@/../backend/src/util/types";
 import { Arrow } from "./Icons";
+import { format } from "date-fns";
 
 type MessageBoxProps = {
   message: MessagePopulated & {
@@ -35,6 +36,9 @@ const MessageBox = ({ message, sentByMe, isPreviousByMe }: MessageBoxProps) => {
         ) : null}
         <span className="whitespace-pre-wrap break-words text-gray-900 text-sm">
           {message.body}
+          <span className="text-xs text-gray-600 mt-2 ml-2 float-right">
+            {format(new Date(message.createdAt), "h:mm a")}
+          </span>
         </span>
       </div>
     </div>

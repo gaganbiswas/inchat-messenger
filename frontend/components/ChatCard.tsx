@@ -17,7 +17,7 @@ type ChatCardProps = {
   userId?: string | null;
   isSelected: boolean;
   onClick: () => void;
-  hasSeenLatestMessage: boolean;
+  hasSeenLatestMessage: boolean | undefined;
 };
 
 const ChatCard = ({
@@ -35,14 +35,14 @@ const ChatCard = ({
         } ${!conversation.latestMessage?.body ? "items-center" : ""}`}
         onClick={onClick}
       >
-        <Avatar src={getImageUrl(conversation.participants, userId!)} />
+        <Avatar src={getImageUrl(conversation?.participants!, userId!)} />
         <div className="w-[calc(100%_-_60px)] flex-col">
           <div className="flex items-center justify-between">
-            <span className="text-base leading-none text-gray-900 truncate flex-1">
-              {formatUsers(conversation.participants, userId!)}
+            <span className="text-base text-gray-900 truncate flex-1">
+              {formatUsers(conversation?.participants!, userId!)}
             </span>
             <span className="text-xs text-gray-600 ml-4">
-              {formatRelative(conversation.updatedAt, new Date(), {
+              {formatRelative(conversation?.updatedAt!, new Date(), {
                 locale: {
                   ...enUS,
                   formatRelative: (token) =>
@@ -54,16 +54,22 @@ const ChatCard = ({
             </span>
           </div>
 
-          {conversation.latestMessage?.body ? (
-            <span className="mt-0.5 truncate text-sm text-gray-600">
-              {conversation.latestMessage?.body}
-            </span>
-          ) : null}
+          <div className="flex items-center justify-between">
+            {conversation.latestMessage?.body ? (
+              <span className="truncate text-sm text-gray-600 flex-1">
+                {conversation.latestMessage?.body}
+              </span>
+            ) : null}
+
+            {hasSeenLatestMessage === false && (
+              <div className="w-2.5 h-2.5 bg-emerald-500 rounded-full ml-4" />
+            )}
+          </div>
         </div>
       </div>
       <div
         className={`ml-[76px] h-[1px] ${
-          isSelected ? "bg-gray-50" : "bg-gray-100"
+          isSelected ? "bg-transaprent" : "bg-gray-100"
         }`}
       />
     </>

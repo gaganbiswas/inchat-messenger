@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ChatIcon, MoreIcon } from "./Icons";
+import { ChatIcon, LogoutIcon } from "./Icons";
 import Avatar from "./Avatar";
 import { signOut } from "next-auth/react";
 import NewChat from "./NewChat";
@@ -27,7 +27,7 @@ const Header = ({ avatar = "" }: { avatar?: string | null | undefined }) => {
             onClick={() => signOut()}
             title="Sign out"
           >
-            <MoreIcon />
+            <LogoutIcon />
           </button>
         </div>
       </header>

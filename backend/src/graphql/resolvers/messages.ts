@@ -144,7 +144,6 @@ const resolvers = {
             conversation,
           },
         });
-
         return true;
       } catch (error) {
         console.log("sendMessage error", error);

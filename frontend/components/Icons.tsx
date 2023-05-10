@@ -26,13 +26,17 @@ export const ChatIcon = () => {
   );
 };
 
-export const MoreIcon = () => {
+export const LogoutIcon = () => {
   return (
-    <svg viewBox="0 0 24 24" className="w-6 h-6">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="w-[18px] h-[18px]"
+      viewBox="0 0 512 512"
+    >
       <path
         fill="currentColor"
-        d="M12,7c1.104,0,2-0.896,2-2c0-1.105-0.895-2-2-2c-1.104,0-2,0.894-2,2 C10,6.105,10.895,7,12,7z M12,9c-1.104,0-2,0.894-2,2c0,1.104,0.895,2,2,2c1.104,0,2-0.896,2-2C13.999,9.895,13.104,9,12,9z M12,15 c-1.104,0-2,0.894-2,2c0,1.104,0.895,2,2,2c1.104,0,2-0.896,2-2C13.999,15.894,13.104,15,12,15z"
-      ></path>
+        d="M502.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-128-128c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L402.7 224 192 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l210.7 0-73.4 73.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l128-128zM160 96c17.7 0 32-14.3 32-32s-14.3-32-32-32L96 32C43 32 0 75 0 128L0 384c0 53 43 96 96 96l64 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-64 0c-17.7 0-32-14.3-32-32l0-256c0-17.7 14.3-32 32-32l64 0z"
+      />
     </svg>
   );
 };
@@ -177,5 +181,32 @@ export const Arrow = ({ sentByMe }: { sentByMe: boolean }) => {
         d="M1.533,2.568L8,11.193V0L2.812,0C1.042,0,0.474,1.156,1.533,2.568z"
       ></path>
     </svg>
+  );
+};
+
+export const LoadingCircle = () => {
+  return (
+    <div className="mt-3 mx-auto flex rounded-full justify-center items-center self-start p-2 bg-gray-100">
+      <svg
+        className="motion-reduce:hidden animate-spin h-5 w-5 text-emerald-500"
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+      >
+        <circle
+          className="opacity-75"
+          cx="12"
+          cy="12"
+          r="10"
+          stroke="#fff"
+          strokeWidth="4"
+        ></circle>
+        <path
+          className="opacity-75"
+          fill="currentColor"
+          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+        ></path>
+      </svg>
+    </div>
   );
 };

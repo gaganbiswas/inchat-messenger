@@ -74,7 +74,6 @@ const main = async () => {
         },
       },
     ],
-    cache: "bounded",
   });
   await server.start();
 

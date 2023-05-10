@@ -58,6 +58,40 @@ const resolvers = {
         user: { id: userId },
       } = session;
 
+      if (participantIds.length === 2) {
+        try {
+          const conversations = await prisma.conversation.findMany({
+            include: conversationPopulated,
+          });
+
+          const existingConversations = conversations
+            .filter(
+              (conversation) =>
+                !!conversation.participants.find((p) => p.userId === userId)
+            )
+            .map((c) => ({
+              id: c.id,
+              participants: c.participants.map((p) => p.userId).sort(),
+            }));
+
+          const sortedParticipantIds = participantIds.sort();
+
+          const existingConversation = existingConversations.map(
+            (c) =>
+              c.participants.every((v, i) => v === sortedParticipantIds[i]) &&
+              c.id
+          );
+
+          if (existingConversation.length > 0)
+            return {
+              conversationId: existingConversation[0],
+            };
+        } catch (error: any) {
+          console.log("existingConversationError", error);
+          throw new GraphQLError("Error getting existing conversation");
+        }
+      }
+
       try {
         const conversation = await prisma.conversation.create({
           data: {
@@ -86,11 +120,11 @@ const resolvers = {
         throw new GraphQLError("Error creating conversation");
       }
     },
-    markConversationAsRead: async (
+    markConversationAsRead: async function (
       _: any,
       args: { userId: string; conversationId: string },
       context: GraphQLContext
-    ): Promise<boolean> => {
+    ): Promise<boolean> {
       const { session, prisma } = context;
       const { userId, conversationId } = args;
 
@@ -107,7 +141,7 @@ const resolvers = {
         });
 
         if (!participant) {
-          throw new GraphQLError("Particiant entity not found");
+          throw new GraphQLError("Participant entity not found");
         }
 
         await prisma.conversationParticipant.update({
@@ -118,9 +152,9 @@ const resolvers = {
             hasSeenLatestMessage: true,
           },
         });
-
         return true;
       } catch (error: any) {
+        console.log("markConversationAsRead error", error);
         throw new GraphQLError(error?.message);
       }
     },

@@ -23,7 +23,7 @@ const FeedHeader = ({ userId }: FeedHeaderProps) => {
   );
 
   const conversation = data?.conversations.find(
-    (conversation) => conversation.id === conversationId
+    (conversation) => conversation?.id === conversationId
   );
 
   if (data?.conversations && !loading && !conversation) {

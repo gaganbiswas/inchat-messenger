@@ -5,16 +5,22 @@ import {
 } from "@/typings";
 import { useQuery } from "@apollo/client";
 import MessageOperations from "@/graphql/operations/message";
-import React, { useEffect } from "react";
+import React, { MutableRefObject, useEffect, useRef } from "react";
 import { client } from "@/graphql/apollo-client";
 import MessageBox from "./MessageBox";
+import { LoadingCircle } from "./Icons";
 
 type MessageProps = {
   userId: string | null | undefined;
   conversationId: string;
+  endOfMessageRef: MutableRefObject<HTMLDivElement | null>;
 };
 
-const Messages = ({ userId, conversationId }: MessageProps) => {
+const Messages = ({
+  userId,
+  conversationId,
+  endOfMessageRef,
+}: MessageProps) => {
   const { data, loading, error, subscribeToMore } = useQuery<
     MessagesData,
     MessagesVariables
@@ -54,23 +60,23 @@ const Messages = ({ userId, conversationId }: MessageProps) => {
   return (
     <div className="flex-1 h-full overflow-hidden">
       {loading ? (
-        <div>Loading...</div>
+        <div className="flex">
+          <LoadingCircle />
+        </div>
       ) : data?.messages ? (
         <div className="flex flex-col-reverse overflow-y-auto h-full">
+          <div className="mt-4" ref={endOfMessageRef} />
           {data.messages.map((message, i, arr) => (
-            <>
-              {i === 0 ? <div className="mt-4" /> : null}
-              <MessageBox
-                key={message.id}
-                message={message}
-                sentByMe={message.sender.id === userId}
-                isPreviousByMe={
-                  i === arr.length - 1
-                    ? false
-                    : arr[i + 1].sender.id === message.sender.id
-                }
-              />
-            </>
+            <MessageBox
+              key={message.id}
+              message={message}
+              sentByMe={message.sender.id === userId}
+              isPreviousByMe={
+                i === arr.length - 1
+                  ? false
+                  : arr[i + 1].sender.id === message.sender.id
+              }
+            />
           ))}
         </div>
       ) : null}
