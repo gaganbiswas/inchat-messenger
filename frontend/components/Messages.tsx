@@ -5,7 +5,7 @@ import {
 } from "@/typings";
 import { useQuery } from "@apollo/client";
 import MessageOperations from "@/graphql/operations/message";
-import React, { MutableRefObject, useEffect, useRef } from "react";
+import React, { MutableRefObject, useEffect } from "react";
 import { client } from "@/graphql/apollo-client";
 import MessageBox from "./MessageBox";
 import { LoadingCircle } from "./Icons";

@@ -48,10 +48,7 @@ const Chats = ({ user }: { user?: User }) => {
           conversationUpdated: { conversation: updatedConversation },
         } = subscriptionData;
 
-        const currentlyViewingConversation =
-          updatedConversation.id === conversationId;
-
-        if (currentlyViewingConversation) {
+        if (updatedConversation.id === conversationId) {
           onViewConversation(conversationId, false);
         }
       },
@@ -105,6 +102,7 @@ const Chats = ({ user }: { user?: User }) => {
           if (userParticipantIdx === -1) return;
 
           const userParticipant = participants[userParticipantIdx];
+
           participants[userParticipantIdx] = {
             ...userParticipant,
             hasSeenLatestMessage: true,
@@ -150,16 +148,16 @@ const Chats = ({ user }: { user?: User }) => {
     });
   };
 
-  useEffect(() => {
-    const unsub = subscribeToNewConversations();
-    return unsub;
-  }, []);
-
   const sortedConversations = conversationsData?.conversations
     ? [...conversationsData?.conversations].sort(
         (a, b) => b.updatedAt.valueOf() - a.updatedAt.valueOf()
       )
-    : conversationsData?.conversations;
+    : [];
+
+  useEffect(() => {
+    const unsub = subscribeToNewConversations();
+    return unsub;
+  }, []);
 
   return (
     <div
