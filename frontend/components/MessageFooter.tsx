@@ -8,6 +8,15 @@ import { SendMessageArguments } from "@/../backend/src/util/types";
 import { client } from "@/graphql/apollo-client";
 import { ObjectID } from "bson";
 import { scrollToBottom } from "@/utils/functions";
+import dynamic from "next/dynamic";
+import { EmojiStyle, Theme } from "emoji-picker-react";
+
+const Picker = dynamic(
+  () => {
+    return import("emoji-picker-react");
+  },
+  { ssr: false }
+);
 
 type MessageFooterProps = {
   user?: User;
@@ -20,8 +29,9 @@ const MessageFooter = ({
   conversationId,
   endOfMessageRef,
 }: MessageFooterProps) => {
+  const [showPicker, setShowPicker] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
-  const [message, setMessage] = useState<string>();
+  const [message, setMessage] = useState<string>("");
   const [sendMessage] = useMutation<
     { sendMessage: boolean },
     SendMessageArguments
@@ -99,9 +109,25 @@ const MessageFooter = ({
   return (
     <div className="px-4 py-2.5 bg-gray-100 items-start flex gap-4">
       <div className="h-10 flex justify-center items-center">
-        <button className="flex text-gray-500 justify-center items-center">
-          <SmileIcon />
-        </button>
+        <div className="relative">
+          <div className={`absolute bottom-12 ${showPicker ? "" : "hidden"}`}>
+            <Picker
+              onEmojiClick={(emoji) => setMessage((prev) => prev + emoji.emoji)}
+              emojiStyle={EmojiStyle.GOOGLE}
+              skinTonesDisabled={true}
+              previewConfig={{
+                showPreview: false,
+              }}
+              theme={Theme.LIGHT}
+            />
+          </div>
+          <button
+            className="flex text-gray-500 justify-center items-center"
+            onClick={() => setShowPicker((prev) => !prev)}
+          >
+            <SmileIcon />
+          </button>
+        </div>
       </div>
 
       <form
