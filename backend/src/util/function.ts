@@ -2,7 +2,7 @@ import fetch from "node-fetch";
 import { ParticipantPopulated } from "./types";
 
 export const getServerSession = async (cookie: string) => {
-  const res = await fetch(`${process.env.NEXTAUTH_URL}/api/auth/session`, {
+  const res = await fetch(process.env.NEXTAUTH_SESSION_URL, {
     headers: { cookie: cookie },
   });
   const session = await res.json();
