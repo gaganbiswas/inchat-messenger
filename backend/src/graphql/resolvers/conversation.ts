@@ -67,57 +67,80 @@ const resolvers = {
           const existingConversations = conversations
             .filter(
               (conversation) =>
-                !!conversation.participants.find((p) => p.userId === userId)
+                !!conversation.participants.find((p) => p?.userId === userId)
             )
             .map((c) => ({
-              id: c.id,
-              participants: c.participants.map((p) => p.userId).sort(),
+              id: c?.id,
+              participants: c.participants?.map((p) => p.userId).sort(),
             }));
 
-          const sortedParticipantIds = participantIds.sort();
+          const existingConversation = existingConversations.find((c) => {
+            const withParticipant = participantIds.filter(
+              (p) => p !== userId
+            )[0];
 
-          const existingConversation = existingConversations.map(
-            (c) =>
-              c.participants.every((v, i) => v === sortedParticipantIds[i]) &&
-              c.id
-          );
+            return c.participants?.includes(withParticipant);
+          })?.id;
 
-          if (existingConversation.length > 0)
+          if (existingConversation)
             return {
-              conversationId: existingConversation[0],
+              conversationId: existingConversation,
             };
+          else {
+            const newConversation = await prisma.conversation.create({
+              data: {
+                participants: {
+                  createMany: {
+                    data: participantIds.map((id) => ({
+                      userId: id,
+                      hasSeenLatestMessage: id === userId,
+                    })),
+                  },
+                },
+              },
+              include: conversationPopulated,
+            });
+
+            pubsub.publish("CONVERSATION_CREATED", {
+              conversationCreated: newConversation,
+            });
+
+            return {
+              conversationId: newConversation.id,
+            };
+          }
         } catch (error: any) {
           console.log("existingConversationError", error);
           throw new GraphQLError("Error getting existing conversation");
         }
-      }
-
-      try {
-        const conversation = await prisma.conversation.create({
-          data: {
-            participants: {
-              createMany: {
-                data: participantIds.map((id) => ({
-                  userId: id,
-                  hasSeenLatestMessage: id === userId,
-                })),
+      } else {
+        try {
+          const conversation = await prisma.conversation.create({
+            data: {
+              participants: {
+                createMany: {
+                  data: participantIds.map((id) => ({
+                    userId: id,
+                    hasSeenLatestMessage: id === userId,
+                  })),
+                },
               },
             },
-          },
-          include: conversationPopulated,
-        });
+            include: conversationPopulated,
+          });
 
-        // emit a CONVERSATION_CREATED event using pubsub
-        pubsub.publish("CONVERSATION_CREATED", {
-          conversationCreated: conversation,
-        });
+          // emit a CONVERSATION_CREATED event using pubsub
+          pubsub.publish("CONVERSATION_CREATED", {
+            conversationCreated: conversation,
+          });
 
-        return {
-          conversationId: conversation.id,
-        };
-      } catch (error) {
-        console.log("createConversationError", error);
-        throw new GraphQLError("Error creating conversation");
+          return {
+            conversationId: conversation.id,
+          };
+        } catch (error) {
+          console.log("createConversationError", error);
+          throw new GraphQLError("Error creating conversation");
+        }
       }
     },
     markConversationAsRead: async function (
