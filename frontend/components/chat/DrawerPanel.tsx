@@ -1,5 +1,5 @@
 import React from "react";
-import Header from "./Header";
+import Header from "../shared/Header";
 import SearchBar from "./SearchBar";
 import Chats from "./Chats";
 import { User } from "@/typings";

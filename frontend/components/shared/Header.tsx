@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { ChatIcon, LogoutIcon } from "./Icons";
 import Avatar from "./Avatar";
 import { signOut } from "next-auth/react";
-import NewChat from "./NewChat";
+import NewChat from "../chat/NewChat";
 
 const Header = ({ avatar = "" }: { avatar?: string | null | undefined }) => {
   const [showModal, setShowModal] = useState(false);

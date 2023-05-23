@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import ChatCard from "./ChatCard";
 import { gql, useMutation, useQuery, useSubscription } from "@apollo/client";
-import ConversationOperations from "../graphql/operations/conversation";
+import ConversationOperations from "../../graphql/operations/conversation";
 import { client } from "@/graphql/apollo-client";
 import { ConversationUpdatedData, ConversationsData } from "@/typings";
 import {
@@ -11,7 +11,7 @@ import {
 import { useRecoilState } from "recoil";
 import { conversationState } from "@/recoil/atom";
 import { User } from "@/typings";
-import { ChatSkeleton } from "./Skeletons";
+import { ChatSkeleton } from "../shared/Skeletons";
 
 const Chats = ({ user }: { user?: User }) => {
   const [conversationId, setConversationId] = useRecoilState(conversationState);

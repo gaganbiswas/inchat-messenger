@@ -1,6 +1,6 @@
 import React from "react";
 import { MessagePopulated } from "@/../backend/src/util/types";
-import { Arrow } from "./Icons";
+import { Arrow } from "../shared/Icons";
 import { format } from "date-fns";
 
 type MessageBoxProps = {

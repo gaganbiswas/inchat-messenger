@@ -1,5 +1,5 @@
 import React from "react";
-import { SearchIcon } from "./Icons";
+import { SearchIcon } from "../shared/Icons";
 
 const ChatSearch = () => {
   return (

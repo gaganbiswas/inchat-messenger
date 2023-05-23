@@ -9,14 +9,14 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { CloseIcon } from "./Icons";
+import { CloseIcon } from "../shared/Icons";
 import { useLazyQuery, useMutation } from "@apollo/client";
 import UserOperations from "@/graphql/operations/users";
 import ConversationOperations from "@/graphql/operations/conversation";
 import { client } from "@/graphql/apollo-client";
 import UserSearchList from "./UserSearchList";
 import Participants from "./Participants";
-import Button from "./Button";
+import Button from "../shared/Button";
 import { getSession } from "next-auth/react";
 import {
   CreateConversationData,

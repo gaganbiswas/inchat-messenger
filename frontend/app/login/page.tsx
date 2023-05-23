@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { authOptions } from "pages/api/auth/[...nextauth]";
 import Image from "next/image";
 import Logo from "../../public/images/avatar.webp";
-import GoogleButton from "@/components/GoogleButton";
+import GoogleButton from "@/components/auth/GoogleButton";
 
 const Login = async () => {
   const session = await getServerSession(authOptions);

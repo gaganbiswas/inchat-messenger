@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef } from "react";
-import { FilterIcon, SearchIcon } from "./Icons";
+import { FilterIcon, SearchIcon } from "../shared/Icons";
 
 const SearchBar = () => {
   const inputRef = useRef<HTMLInputElement>(null);

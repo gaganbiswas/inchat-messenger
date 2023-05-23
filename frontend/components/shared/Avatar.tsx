@@ -1,6 +1,6 @@
 import React from "react";
 import Image from "next/image";
-import DefaultAvatar from "../public/images/avatar.webp";
+import DefaultAvatar from "../../public/images/avatar.webp";
 import { ImageProps } from "next/image";
 
 export interface NcImageProps extends ImageProps {

@@ -1,5 +1,5 @@
 import React from "react";
-import Avatar from "./Avatar";
+import Avatar from "../shared/Avatar";
 import RoomInfo from "./RoomInfo";
 import { useQuery } from "@apollo/client";
 import { ConversationsData } from "@/typings";

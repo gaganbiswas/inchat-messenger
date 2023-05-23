@@ -8,7 +8,7 @@ import MessageOperations from "@/graphql/operations/message";
 import React, { MutableRefObject, useEffect } from "react";
 import { client } from "@/graphql/apollo-client";
 import MessageBox from "./MessageBox";
-import { LoadingCircle } from "./Icons";
+import { LoadingCircle } from "../shared/Icons";
 
 type MessageProps = {
   userId: string | null | undefined;

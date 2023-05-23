@@ -1,4 +1,4 @@
-import ClientPanel from "@/components/ClientPanel";
+import ClientPanel from "@/components/chat/ClientPanel";
 import { getServerSession } from "next-auth/next";
 import { redirect } from "next/navigation";
 import { authOptions } from "pages/api/auth/[...nextauth]";

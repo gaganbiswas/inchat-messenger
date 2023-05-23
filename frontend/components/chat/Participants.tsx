@@ -1,5 +1,5 @@
 import React from "react";
-import { CloseIcon } from "./Icons";
+import { CloseIcon } from "../shared/Icons";
 import { SearchedUser } from "@/typings";
 
 type ParticipantsProps = {

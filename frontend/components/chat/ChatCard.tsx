@@ -1,5 +1,5 @@
 import React from "react";
-import Avatar from "./Avatar";
+import Avatar from "@/components/shared/Avatar";
 import { ConversationPopulated } from "@/../backend/src/util/types";
 import { formatUsers, getImageUrl } from "@/utils/functions";
 import { formatRelative } from "date-fns";

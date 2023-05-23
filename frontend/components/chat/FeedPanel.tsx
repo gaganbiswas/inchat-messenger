@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
-import MessageFooter from "@/components/MessageFooter";
-import Messages from "@/components/Messages";
+import MessageFooter from "@/components/chat/MessageFooter";
+import Messages from "@/components/chat/Messages";
 import { useRecoilState } from "recoil";
 import { conversationState } from "@/recoil/atom";
 import FeedHeader from "./FeedHeader";

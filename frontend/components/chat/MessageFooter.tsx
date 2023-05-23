@@ -1,5 +1,5 @@
 import React, { MutableRefObject, useRef, useState } from "react";
-import { SendIcon, SmileIcon } from "./Icons";
+import { SendIcon, SmileIcon } from "../shared/Icons";
 import TextareaAutosize from "react-textarea-autosize";
 import { MessagesData, User } from "@/typings";
 import { useMutation } from "@apollo/client";
