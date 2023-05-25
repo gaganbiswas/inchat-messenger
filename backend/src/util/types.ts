@@ -3,7 +3,6 @@ import {
   participantPopulated,
 } from "./../graphql/resolvers/conversation";
 import { Prisma, PrismaClient } from "@prisma/client";
-import { ISODateString } from "next-auth";
 import { PubSub } from "graphql-subscriptions";
 import { Context } from "graphql-ws/lib/server";
 import { messagePopulated } from "../graphql/resolvers/messages";
@@ -22,7 +21,7 @@ export interface SubscriptionContext extends Context {
 
 export interface Session {
   user?: User;
-  expires: ISODateString;
+  expires: Date;
 }
 
 export interface User {
