@@ -44,6 +44,7 @@ model User {
   messages      Message[]
   accounts      Account[]
   sessions      Session[]
+  publicKey     String?
 }
 
 model VerificationToken {

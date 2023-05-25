@@ -10,6 +10,7 @@ import { ObjectID } from "bson";
 import { scrollToBottom } from "@/utils/functions";
 import dynamic from "next/dynamic";
 import { EmojiStyle, Theme } from "emoji-picker-react";
+import { encryptMessage } from "@/protocol/mtp";
 
 const Picker = dynamic(
   () => {
@@ -49,11 +50,13 @@ const MessageFooter = ({
     try {
       const senderId = user?.id!;
       const messageId = new ObjectID().toString();
+      const encryptedMessage = encryptMessage(conversationId, message);
+
       const newMessage: SendMessageArguments = {
         id: messageId,
         senderId,
         conversationId,
-        body: message,
+        body: encryptedMessage,
       };
 
       const { data, errors } = await sendMessage({
@@ -79,7 +82,7 @@ const MessageFooter = ({
               messages: [
                 {
                   id: messageId,
-                  body: message,
+                  body: encryptedMessage,
                   senderId: user?.id,
                   conversationId,
                   sender: {

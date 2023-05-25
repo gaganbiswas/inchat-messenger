@@ -9,6 +9,7 @@ const typeDefs = gql`
     name: String
     image: String
     emailVerified: Boolean
+    publicKey: String
   }
 
   type Query {

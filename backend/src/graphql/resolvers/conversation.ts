@@ -253,6 +253,8 @@ export const participantPopulated =
         email: true,
         image: true,
         name: true,
+        //@ts-ignore
+        publicKey: true,
       },
     },
   });
@@ -260,6 +262,7 @@ export const participantPopulated =
 export const conversationPopulated =
   Prisma.validator<Prisma.ConversationInclude>()({
     participants: {
+      //@ts-ignore
       include: participantPopulated,
     },
     latestMessage: {

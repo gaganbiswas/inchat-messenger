@@ -68,6 +68,7 @@ const Messages = ({
           <div className="mt-4" ref={endOfMessageRef} />
           {data.messages.map((message, i, arr) => (
             <MessageBox
+              conversationId={conversationId}
               key={message.id}
               message={message}
               sentByMe={message.sender.id === userId}

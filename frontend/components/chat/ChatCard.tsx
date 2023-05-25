@@ -4,6 +4,7 @@ import { ConversationPopulated } from "@/../backend/src/util/types";
 import { formatUsers, getImageUrl } from "@/utils/functions";
 import { formatRelative } from "date-fns";
 import enUS from "date-fns/locale/en-US";
+import { decryptMessage } from "@/protocol/mtp";
 
 const formatRelativeLocale = {
   lastWeek: "eeee",
@@ -57,9 +58,14 @@ const ChatCard = ({
           <div className="flex items-center justify-between">
             {conversation.latestMessage?.body ? (
               <span className="truncate text-sm text-gray-600 flex-1">
-                {conversation.latestMessage?.body}
+                {decryptMessage(
+                  conversation.id,
+                  conversation.latestMessage?.body!
+                )}
               </span>
-            ) : null}
+            ) : (
+              <div className="flex-1" />
+            )}
 
             {hasSeenLatestMessage === false && (
               <div className="w-2.5 h-2.5 bg-emerald-500 rounded-full ml-4" />

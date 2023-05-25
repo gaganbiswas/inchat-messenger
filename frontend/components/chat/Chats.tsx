@@ -12,6 +12,7 @@ import { useRecoilState } from "recoil";
 import { conversationState } from "@/recoil/atom";
 import { User } from "@/typings";
 import { ChatSkeleton } from "../shared/Skeletons";
+import { keyObj } from "@/protocol/mtp";
 
 const Chats = ({ user }: { user?: User }) => {
   const [conversationId, setConversationId] = useRecoilState(conversationState);
@@ -141,6 +142,30 @@ const Chats = ({ user }: { user?: User }) => {
       ) => {
         if (!subscriptionData.data) return prev;
         const newConversation = subscriptionData.data.conversationCreated;
+
+        /**
+         * Add Conversation Shared Key to Local Storage
+         */
+        const otherParticipant = newConversation.participants.find(
+          (p) => p.user.id !== userId
+        )?.user;
+
+        const otherParticipantPublicKey = otherParticipant?.publicKey;
+
+        const sharedKeyExists = localStorage.getItem(newConversation.id);
+        if (!sharedKeyExists) {
+          const sharedKey = keyObj.computeSecret(
+            otherParticipantPublicKey!,
+            "base64",
+            "hex"
+          );
+
+          localStorage.setItem(
+            newConversation.id,
+            JSON.stringify({ sharedKey: sharedKey })
+          );
+        }
+
         return Object.assign({}, prev, {
           conversations: [newConversation, ...prev.conversations],
         });

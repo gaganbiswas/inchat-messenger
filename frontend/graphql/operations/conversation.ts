@@ -9,6 +9,7 @@ const ConversationFields = `
       name
       email
       image
+      publicKey
     }
     hasSeenLatestMessage
   }

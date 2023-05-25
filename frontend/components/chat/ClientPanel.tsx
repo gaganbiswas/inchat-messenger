@@ -1,12 +1,27 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { RecoilRoot } from "recoil";
 import DrawerPanel from "./DrawerPanel";
 import FeedPanel from "./FeedPanel";
 import { Session } from "next-auth";
+import { generateKeys } from "../../protocol/mtp";
 
 const ClientPanel = ({ session }: { session: Session }) => {
+  const generateAndStoreKeys = async () => {
+    //@ts-ignore
+    const privateKey = localStorage.getItem(session?.user?.id);
+
+    if (privateKey) return;
+
+    //@ts-ignore
+    await generateKeys(session?.user?.id);
+  };
+
+  useEffect(() => {
+    generateAndStoreKeys();
+  }, []);
+
   return (
     <RecoilRoot>
       <DrawerPanel user={session.user} />

@@ -2,8 +2,10 @@ import React from "react";
 import { MessagePopulated } from "@/../backend/src/util/types";
 import { Arrow } from "../shared/Icons";
 import { format } from "date-fns";
+import { decryptMessage } from "@/protocol/mtp";
 
 type MessageBoxProps = {
+  conversationId: string;
   message: MessagePopulated & {
     body: string;
   };
@@ -11,7 +13,14 @@ type MessageBoxProps = {
   isPreviousByMe: boolean;
 };
 
-const MessageBox = ({ message, sentByMe, isPreviousByMe }: MessageBoxProps) => {
+const MessageBox = ({
+  conversationId,
+  message,
+  sentByMe,
+  isPreviousByMe,
+}: MessageBoxProps) => {
+  const decryptedMessage = decryptMessage(conversationId, message.body);
+
   return (
     <div
       className={`flex flex-col w-full px-5 ${
@@ -35,7 +44,7 @@ const MessageBox = ({ message, sentByMe, isPreviousByMe }: MessageBoxProps) => {
           </span>
         ) : null}
         <span className="whitespace-pre-wrap break-words text-gray-900 text-sm">
-          {message.body}
+          {decryptedMessage}
           <span className="text-xs text-gray-600 mt-2 ml-2 float-right">
             {format(new Date(message.createdAt), "h:mm a")}
           </span>
