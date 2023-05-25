@@ -12,7 +12,7 @@ import { useRecoilState } from "recoil";
 import { conversationState } from "@/recoil/atom";
 import { User } from "@/typings";
 import { ChatSkeleton } from "../shared/Skeletons";
-import { keyObj } from "@/protocol/mtp";
+import { generateGroupSharedSecret, keyObj } from "@/protocol/mtp";
 
 const Chats = ({ user }: { user?: User }) => {
   const [conversationId, setConversationId] = useRecoilState(conversationState);
@@ -146,24 +146,47 @@ const Chats = ({ user }: { user?: User }) => {
         /**
          * Add Conversation Shared Key to Local Storage
          */
-        const otherParticipant = newConversation.participants.find(
-          (p) => p.user.id !== userId
-        )?.user;
+        const otherParticipantsLength = newConversation.participants.length;
 
-        const otherParticipantPublicKey = otherParticipant?.publicKey;
+        if (otherParticipantsLength === 2) {
+          const otherParticipant = newConversation.participants.find(
+            (p) => p.user.id !== userId
+          )?.user;
 
-        const sharedKeyExists = localStorage.getItem(newConversation.id);
-        if (!sharedKeyExists) {
-          const sharedKey = keyObj.computeSecret(
-            otherParticipantPublicKey!,
-            "base64",
-            "hex"
+          const otherParticipantPublicKey = otherParticipant?.publicKey;
+
+          const sharedKeyExists = localStorage.getItem(newConversation.id);
+          if (!sharedKeyExists) {
+            const sharedKey = keyObj.computeSecret(
+              otherParticipantPublicKey!,
+              "base64",
+              "hex"
+            );
+
+            localStorage.setItem(
+              newConversation.id,
+              JSON.stringify({ sharedKey: sharedKey })
+            );
+          }
+        } else {
+          const otherParticipants = newConversation.participants.filter(
+            (p) => p.user.id !== userId
           );
 
-          localStorage.setItem(
-            newConversation.id,
-            JSON.stringify({ sharedKey: sharedKey })
+          const otherParticipantsPublicKeys = otherParticipants?.map(
+            (p) => p.user.publicKey
           );
+
+          console.log(otherParticipantsPublicKeys);
+
+          const sharedKeyExists = localStorage.getItem(newConversation.id);
+          if (!sharedKeyExists) {
+            generateGroupSharedSecret(
+              newConversation.id,
+              //@ts-ignore
+              otherParticipantsPublicKeys
+            );
+          }
         }
 
         return Object.assign({}, prev, {

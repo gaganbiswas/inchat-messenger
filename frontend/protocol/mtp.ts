@@ -1,10 +1,9 @@
 import crypto from "crypto";
 
 export const keyObj = crypto.createECDH("secp256k1");
+keyObj.generateKeys();
 
 export const generateKeys = async (userId: string) => {
-  keyObj.generateKeys();
-
   const publicKeyBase64 = keyObj.getPublicKey().toString("base64");
   const privateKeyBase64 = keyObj.getPrivateKey().toString("base64");
 
@@ -28,6 +27,26 @@ export const generateKeys = async (userId: string) => {
   } catch (error) {
     console.log(error);
   }
+};
+
+export const generateGroupSharedSecret = (
+  conversationId: string,
+  publicKeys: Array<string>
+) => {
+  const sharedKeys = publicKeys.map((key) => {
+    keyObj.generateKeys();
+    keyObj.computeSecret(key, "base64", "hex");
+  });
+  const combinedSecret = sharedKeys.reduce((acc, key) => acc + key, "");
+  const finalSharedSecret = crypto
+    .createHash("sha256")
+    .update(combinedSecret, "hex")
+    .digest("hex");
+
+  localStorage.setItem(
+    conversationId,
+    JSON.stringify({ sharedKey: finalSharedSecret })
+  );
 };
 
 export const encryptMessage = (conversationId: string, message: string) => {
